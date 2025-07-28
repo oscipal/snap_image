@@ -1,12 +1,12 @@
-FROM alpine:3.21 as base
+FROM alpine:3.21 AS base
 
 # Install OpenJDK 11 and essential runtime dependencies
-RUN apk add --no-cache openjdk11-jre python3 ttf-dejavu fontconfig libstdc++ libgcc libx11 libxext libxrender libxtst libxi libxrandr libxinerama libfreetype libfontconfig libxss
+RUN apk add --no-cache openjdk11 python3 ttf-dejavu fontconfig libstdc++ libgcc libx11 libxext libxrender libxtst libxi libxrandr libxinerama libfreetype libfontconfig libxss
 
 ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk"
 ENV PATH="$JAVA_HOME/bin:$PATH"
 
-FROM base as build
+FROM base AS build
 
 USER root
 
@@ -40,7 +40,7 @@ RUN echo "Install build dependencies"; \
 
 ENV LC_ALL="en_US.UTF-8"
 # SNAP wants current folder '.' included in LD_LIBRARY_PATH
-ENV LD_LIBRARY_PATH=".:/usr/lib/jvm/java-11-openjdk/lib/server/:$LD_LIBRARY_PATH"
+ENV LD_LIBRARY_PATH=".:/usr/lib/jvm/java-11-openjdk/lib/server/:${LD_LIBRARY_PATH}"
 
 # Set JAVA_HOME correctly for SNAP
 ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk"
@@ -51,7 +51,7 @@ COPY snap /src/snap
 # Run your SNAP installation script
 RUN sh /src/snap/install.sh
 
-FROM base as snappy
+FROM base AS snappy
 
 # Install runtime dependencies for SNAP
 RUN apk add --no-cache openjdk11 python3 ttf-dejavu fontconfig libstdc++ libgcc libx11 libxext libxrender libxtst libxi libxrandr libxinerama libfreetype libfontconfig libxss
