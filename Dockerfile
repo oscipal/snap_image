@@ -1,41 +1,28 @@
-name: Build and Push SNAP 12 Docker Image
+# Use Debian slim with OpenJDK 11
+FROM openjdk:11-jre-slim
 
-on:
-  push:
-    branches: [main]  # or your branch name
+# Install required dependencies and Python 3 if needed
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 python3-pip wget unzip fontconfig fonts-dejavu \
+    libxext6 libxrender1 libxtst6 libxi6 libxrandr2 libxinerama1 libfreetype6 libfontconfig1 libxss1 libx11-6 \
+    && rm -rf /var/lib/apt/lists/*
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+# Set environment variables
+ENV SNAP_VERSION=12.0.0
+ENV SNAP_HOME=/opt/snap
+ENV JAVA_HOME=/usr/local/openjdk-11
+ENV PATH=${SNAP_HOME}/bin:$PATH
 
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
+# Download and silently install SNAP 12
+RUN wget -O /tmp/snap-installer.sh "https://step.esa.int/downloads/8.0/installers/snap-${SNAP_VERSION}-linux.sh" && \
+    bash /tmp/snap-installer.sh -q -dir ${SNAP_HOME} && \
+    rm /tmp/snap-installer.sh
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+# Set working directory
+WORKDIR /usr/local/app
 
-      - name: Set up QEMU (for multi-arch, optional)
-        uses: docker/setup-qemu-action@v3
+# Optionally copy your app code
+# COPY . .
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ghcr.io/${{ github.repository_owner }}/snap12:latest
-
-      - name: Output image digest
-        run: echo ${{ steps.build-and-push.outputs.digest }}
+# Default command (adjust as needed)
+CMD ["bash"]
