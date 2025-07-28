@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV SNAP_VERSION=12.0.0
 ENV SNAP_HOME=/opt/snap
 ENV SNAP_USER_HOME=/mnt/vol/.snap
+ENV SNAP_AUXDATA=/mnt/vol/.snap/auxdata
 ENV PATH=${SNAP_HOME}/bin:${PATH}
 
 # Download and install SNAP silently
