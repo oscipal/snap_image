@@ -1,70 +1,41 @@
-FROM alpine:3.21 AS base
+name: Build and Push SNAP 12 Docker Image
 
-# Install OpenJDK 11 and essential runtime dependencies
-RUN apk add --no-cache openjdk11 python3 ttf-dejavu fontconfig libstdc++ libgcc libx11 libxext libxrender libxtst libxi libxrandr libxinerama libfreetype libfontconfig libxss
+on:
+  push:
+    branches: [main]  # or your branch name
 
-ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk"
-ENV PATH="$JAVA_HOME/bin:$PATH"
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-FROM base AS build
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
 
-USER root
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-ENV BUILD_PACKAGES="\
-      gawk \
-      gcc \
-      gcompat \
-      git \
-      maven \
-      musl-dev \
-      python3-dev \
-      wget \
-      "
+      - name: Set up QEMU (for multi-arch, optional)
+        uses: docker/setup-qemu-action@v3
 
-ENV PACKAGES="\
-      fontconfig \
-      gcompat \
-      libgfortran \
-      openjdk11 \
-      python3 \
-      vim \
-      ttf-dejavu \
-      zip \
-      "
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-RUN echo "Install build dependencies"; \
-    apk update; \
-    apk add --no-cache --virtual .build-deps $BUILD_PACKAGES; \
-    apk add --no-cache $PACKAGES; \
-    echo "Install step done"
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-ENV LC_ALL="en_US.UTF-8"
-# SNAP wants current folder '.' included in LD_LIBRARY_PATH
-ENV LD_LIBRARY_PATH=".:/usr/lib/jvm/java-11-openjdk/lib/server/:${LD_LIBRARY_PATH}"
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/snap12:latest
 
-# Set JAVA_HOME correctly for SNAP
-ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk"
-
-# Copy your SNAP installer script/folder into the container
-COPY snap /src/snap
-
-# Run your SNAP installation script
-RUN sh /src/snap/install.sh
-
-FROM base AS snappy
-
-# Install runtime dependencies for SNAP
-RUN apk add --no-cache openjdk11 python3 ttf-dejavu fontconfig libstdc++ libgcc libx11 libxext libxrender libxtst libxi libxrandr libxinerama libfreetype libfontconfig libxss
-
-ENV LD_LIBRARY_PATH=".:$LD_LIBRARY_PATH"
-COPY --from=build /root/.snap /root/.snap
-COPY --from=build /usr/local/snap /usr/local/snap
-
-# Update SNAP modules (requires fontconfig)
-RUN /usr/local/snap/bin/snap --nosplash --nogui --modules --update-all
-
-# Add SNAP binaries to PATH
-ENV PATH="${PATH}:/usr/local/snap/bin"
-
-# Test SNAP GPT CLI
-RUN gpt -h
+      - name: Output image digest
+        run: echo ${{ steps.build-and-push.outputs.digest }}
