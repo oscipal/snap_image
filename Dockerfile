@@ -1,28 +1,28 @@
-# Use Debian slim with OpenJDK 11
+# Use a Debian-based OpenJDK 11 runtime
 FROM openjdk:11-jre-slim
 
-# Install required dependencies and Python 3 if needed
+# Install dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3 python3-pip wget unzip fontconfig fonts-dejavu \
+    wget unzip python3 fontconfig fonts-dejavu \
     libxext6 libxrender1 libxtst6 libxi6 libxrandr2 libxinerama1 libfreetype6 libfontconfig1 libxss1 libx11-6 \
     && rm -rf /var/lib/apt/lists/*
 
-# Set environment variables
+# Set versions and directories
 ENV SNAP_VERSION=12.0.0
 ENV SNAP_HOME=/opt/snap
-ENV JAVA_HOME=/usr/local/openjdk-11
-ENV PATH=${SNAP_HOME}/bin:$PATH
+ENV SNAP_AUXDATA=/opt/snap/auxdata
+ENV PATH=${SNAP_HOME}/bin:${PATH}
 
-# Download and silently install SNAP 12
+# Download and install SNAP silently
 RUN wget -O /tmp/snap-installer.sh "https://download.esa.int/step/snap/12.0/installers/esa-snap_all_linux-12.0.0.sh" && \
     bash /tmp/snap-installer.sh -q -dir ${SNAP_HOME} && \
     rm /tmp/snap-installer.sh
 
-# Set working directory
-WORKDIR /usr/local/app
+# Create auxdata directory and set permissions
+RUN mkdir -p ${SNAP_AUXDATA} && chmod -R 777 ${SNAP_AUXDATA}
 
-# Optionally copy your app code
-# COPY . .
+# Set working directory for convenience
+WORKDIR /data
 
-# Default command (adjust as needed)
+# Default command: run bash
 CMD ["bash"]

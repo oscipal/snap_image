@@ -23,7 +23,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository_owner }}/snap_image
+          images: ghcr.io/snapper/snap_image:latest
           tags: |
             latest
 
