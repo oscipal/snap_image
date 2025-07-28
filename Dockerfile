@@ -14,6 +14,8 @@ ENV SNAP_USER_HOME=/mnt/vol/.snap
 ENV SNAP_AUXDATA=/mnt/vol/.snap/auxdata
 ENV PATH=${SNAP_HOME}/bin:${PATH}
 
+RUN mkdir -p /mnt/vol/.snap/auxdata && chmod -R 777 /mnt/vol/.snap
+
 # Download and install SNAP silently
 RUN wget -O /tmp/snap-installer.sh "https://download.esa.int/step/snap/12.0/installers/esa-snap_all_linux-12.0.0.sh" && \
     bash /tmp/snap-installer.sh -q -dir ${SNAP_HOME} && \
