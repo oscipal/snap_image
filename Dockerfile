@@ -14,7 +14,7 @@ ENV JAVA_HOME=/usr/local/openjdk-11
 ENV PATH=${SNAP_HOME}/bin:$PATH
 
 # Download and silently install SNAP 12
-RUN wget -O /tmp/snap-installer.sh "https://step.esa.int/downloads/12.0/installers/snap-${SNAP_VERSION}-linux.sh" && \
+RUN wget -O /tmp/snap-installer.sh "https://download.esa.int/step/snap/12.0/installers/esa-snap_all_linux-12.0.0.sh" && \
     bash /tmp/snap-installer.sh -q -dir ${SNAP_HOME} && \
     rm /tmp/snap-installer.sh
 
