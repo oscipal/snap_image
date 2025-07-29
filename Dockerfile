@@ -10,11 +10,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Set versions and directories
 ENV SNAP_VERSION=12.0.0
 ENV SNAP_HOME=/opt/snap
-ENV SNAP_USER_HOME=/mnt/vol/.snap
-ENV SNAP_AUXDATA=/mnt/vol/.snap/auxdata
+ENV SNAP_USER_HOME=/eodc/private/tempearth
+ENV SNAP_AUXDATA=/eodc/private/tempearth/.snap/auxdata
 ENV PATH=${SNAP_HOME}/bin:${PATH}
-
-RUN mkdir -p /mnt/vol/.snap/auxdata && chmod -R 777 /mnt/vol/.snap
 
 # Download and install SNAP silently
 RUN wget -O /tmp/snap-installer.sh "https://download.esa.int/step/snap/12.0/installers/esa-snap_all_linux-12.0.0.sh" && \
