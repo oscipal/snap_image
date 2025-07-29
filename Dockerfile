@@ -15,7 +15,7 @@ ENV PATH=${SNAP_HOME}/bin:${PATH}
 # Download and install SNAP silently
 RUN wget -O /tmp/snap-installer.sh "https://download.esa.int/step/snap/12.0/installers/esa-snap_all_linux-12.0.0.sh" && \
     bash /tmp/snap-installer.sh -q -dir ${SNAP_HOME} && \
-    rm /tmp/snap-installer.sh
+    rm /tmp/snap-installer.sh && \
     echo "-Dsnap.userdir=/eodc/private/tempearth" >> ${SNAP_HOME}/bin/gpt.vmoptions
 
 
