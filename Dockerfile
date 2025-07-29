@@ -21,7 +21,7 @@ RUN wget -O /tmp/snap-installer.sh "https://download.esa.int/step/snap/12.0/inst
 #RUN mkdir -p ${SNAP_AUXDATA} && chmod -R 777 ${SNAP_AUXDATA}
 
 # Set working directory for convenience
-WORKDIR /data
+#WORKDIR /data
 
 # Default command: run bash
 CMD ["bash"]
