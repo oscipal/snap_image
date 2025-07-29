@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Set versions and directories
 ENV SNAP_VERSION=12.0.0
 ENV SNAP_HOME=/opt/snap
-ENV SNAP_USER_HOME=/eodc/private/tempearth
+ENV SNAP_USER_HOME=/eodc/private/tempearth/.snap
 ENV SNAP_AUXDATA=/eodc/private/tempearth/.snap/auxdata
 ENV PATH=${SNAP_HOME}/bin:${PATH}
 
