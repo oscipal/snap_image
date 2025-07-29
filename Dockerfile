@@ -10,8 +10,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Set versions and directories
 ENV SNAP_VERSION=12.0.0
 ENV SNAP_HOME=/opt/snap
-ENV SNAP_USER_HOME=/eodc/private/tempearth/.snap
-ENV SNAP_AUXDATA=/eodc/private/tempearth/.snap/auxdata
 ENV PATH=${SNAP_HOME}/bin:${PATH}
 
 # Download and install SNAP silently
@@ -20,7 +18,7 @@ RUN wget -O /tmp/snap-installer.sh "https://download.esa.int/step/snap/12.0/inst
     rm /tmp/snap-installer.sh
 
 # Create auxdata directory and set permissions
-RUN mkdir -p ${SNAP_AUXDATA} && chmod -R 777 ${SNAP_AUXDATA}
+#RUN mkdir -p ${SNAP_AUXDATA} && chmod -R 777 ${SNAP_AUXDATA}
 
 # Set working directory for convenience
 WORKDIR /data
